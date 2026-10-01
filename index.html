@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <!--
+    README / LIBRARIES USED:
+    - pdf.js (Apache-2.0): PDF text extraction.
+    - mammoth.js (BSD-2): DOCX to HTML conversion.
+    - turndown & turndown-plugin-gfm (MIT): HTML to Markdown (with tables/strikethrough).
+    - SheetJS / xlsx (Apache-2.0): Spreadsheet to HTML/Markdown.
+    - JSZip (MIT): Parsing PPTX/EPUB zip structures and creating final Zip downloads.
+    - Tesseract.js (Apache-2.0): OCR for images.
+    - marked (MIT): Markdown to HTML rendering for the preview.
+    - DOMPurify (MPL-2.0/Apache-2.0): Sanitizing HTML before rendering.
+    -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Universal Markdown Converter</title>
+    <link rel="stylesheet" href="style.css">
+
+    <!-- CDNs for required libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script>pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';</script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/turndown/7.1.2/turndown.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/turndown-plugin-gfm@1.0.2/dist/turndown-plugin-gfm.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tesseract.js/4.1.2/tesseract.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/9.1.2/marked.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.6/purify.min.js"></script>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <h1>📄 Any-to-Markdown</h1>
+            <p class="subtitle">100% Client-Side • Private • Open Source</p>
+        </div>
+        <button id="theme-toggle" aria-label="Toggle dark/light mode">🌙 Dark Mode</button>
+    </header>
+
+    <main>
+        <!-- Top Section: Upload & Options -->
+        <section class="upload-section">
+            <div id="dropzone" class="dropzone" tabindex="0" role="button" aria-label="File upload dropzone">
+                <span class="icon">📁</span>
+                <p>Drag & Drop files here</p>
+                <p class="small">or click to browse</p>
+                <input type="file" id="file-input" multiple hidden>
+            </div>
+            
+            <div class="options-panel">
+                <h3>⚙️ Settings</h3>
+                <label>
+                    <input type="checkbox" id="opt-images" checked>
+                    Embed Images (Base64)
+                </label>
+                <label>
+                    <input type="checkbox" id="opt-tables" checked>
+                    Preserve Tables (GFM)
+                </label>
+                <label>
+                    OCR Language (for Images):
+                    <select id="opt-lang">
+                        <option value="eng" selected>English</option>
+                        <option value="fra">French</option>
+                        <option value="spa">Spanish</option>
+                        <option value="deu">German</option>
+                    </select>
+                </label>
+                <p class="privacy-note">🔒 Your files are processed locally and never uploaded to any server.</p>
+            </div>
+        </section>
+
+        <!-- Queue Section -->
+        <section id="queue-section" class="queue-section hidden">
+            <div class="queue-header">
+                <h2>File Queue</h2>
+                <button id="btn-download-all" class="btn primary hidden">📦 Download All as .zip</button>
+            </div>
+            <ul id="file-list" class="file-list"></ul>
+        </section>
+
+        <!-- Workspace Section (Side by Side) -->
+        <section id="workspace" class="workspace hidden">
+            <div class="toolbar">
+                <span id="active-filename" class="active-filename">No file selected</span>
+                <div class="actions">
+                    <button id="btn-copy" class="btn">📋 Copy</button>
+                    <button id="btn-download-single" class="btn primary">⬇️ Download .md</button>
+                </div>
+            </div>
+            <div class="editor-container">
+                <div class="pane pane-left">
+                    <div class="pane-header">Markdown Source</div>
+                    <textarea id="md-editor" spellcheck="false" aria-label="Markdown editor"></textarea>
+                </div>
+                <div class="pane pane-right">
+                    <div class="pane-header">Preview</div>
+                    <div id="md-preview" class="markdown-body"></div>
+                </div>
+            </div>
+        </section>
+    </main>
+    <footer class="app-footer">
+        <p>Crafted by Sidharth &hearts;</p>
+    </footer>
+    <script src="script.js"></script>
+</body>
+</html>
